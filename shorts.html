@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuickClip</title>
+    <title>Görgetés mint TikTok</title>
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #000;
             color: #fff;
+            overflow: hidden;
         }
 
         .video-container {
@@ -17,7 +18,6 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow: hidden;
             position: relative;
         }
 
@@ -82,7 +82,7 @@
         <button id="skip-btn">Átugrás</button>
     </div>
     <div id="overlay">
-        <p>Fontos a videók feltöltésével elfogadod a(z) oldal szabályait.</p>
+        <p>Scrollozz lefelé a következő videóért</p>
     </div>
     <div id="message">
         <p>Minden videót megnéztél!</p>
@@ -98,13 +98,13 @@
             let page = 1; // Kezdetben az első oldal van betöltve
             let watchedVideos = []; // Megnézett videók tömbje
 
-            // Ellenőrizzük a sütiket
+            // Ellenőrizzük a localStorage-t
             const storedWatchedVideos = localStorage.getItem("watchedVideos");
             if (storedWatchedVideos) {
                 watchedVideos = JSON.parse(storedWatchedVideos);
             }
 
-            // Minden újratöltésnél töröljük a sütiket
+            // Minden újratöltésnél töröljük a localStorage tartalmát
             localStorage.removeItem("watchedVideos");
 
             function loadRandomVideo() {
@@ -151,20 +151,11 @@
             // Az első véletlenszerű videó betöltése
             loadRandomVideo();
 
-            // Görgetés figyelése
-            window.addEventListener("scroll", function() {
-                const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-                if (scrollTop + clientHeight >= scrollHeight - 5) {
-                    overlay.style.display = "none";
-                    loadRandomVideo();
-                } else {
-                    overlay.style.display = "block";
-                }
-            });
-
             // Skip gomb eseménykezelője
             skipBtn.addEventListener("click", function() {
-                loadRandomVideo();
+                watchedVideos.push(randomVideo); // Hozzáadjuk a megtekintett videókhoz
+                localStorage.setItem("watchedVideos", JSON.stringify(watchedVideos)); // Sütikbe mentjük
+                loadRandomVideo(); // Továbblépünk a következő videóra
             });
         });
     </script>
