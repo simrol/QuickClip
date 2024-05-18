@@ -9,47 +9,49 @@
 <body>
     <div id="container"></div>
     <script>document.addEventListener("DOMContentLoaded", function() {
-    const container = document.getElementById("container");
+    const videoContainer = document.getElementById("video-container");
+    let loading = false;
+    let page = 1; // Kezdetben az első oldal van betöltve
 
-    function createNewPost() {
-        const post = document.createElement("div");
-        post.className = "post";
+    function loadVideos() {
+        if (loading) return;
+        loading = true;
 
-        // Generálunk egy véletlenszerű ID-t
-        const videoId = Math.floor(Math.random() * 1000);
+        fetch(`https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/videos?page=${page}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    data.videos.forEach(video => {
+                        const videoElement = document.createElement("video");
+                        videoElement.src = `/uploads/${video}`;
+                        videoElement.controls = true;
+                        videoContainer.appendChild(videoElement);
+                    });
 
-        // Videó elem létrehozása
-        const video = document.createElement("video");
-        video.src = `https://https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${videoId}.mp4`; // Használja a videoId-t a URL-ben
-        video.controls = true;
-
-        // Videó ID hozzáadása
-        const videoIdText = document.createElement("div");
-        videoIdText.innerText = " " + videoId;
-
-        // Hozzáadjuk a videót és a szöveget a poszthoz
-        post.appendChild(video);
-        post.appendChild(videoIdText);
-
-        // Hozzáadjuk a posztot a containerhez
-        container.appendChild(post);
+                    page++; // Következő oldalra lépünk
+                } else {
+                    console.error("Hiba történt a videók betöltése közben:", data.message);
+                }
+                loading = false;
+            })
+            .catch(error => {
+                console.error("Hiba történt a videók betöltése közben:", error);
+                loading = false;
+            });
     }
 
-    function loadMorePosts() {
-        for (let i = 0; i < 3; i++) {
-            createNewPost();
-        }
-    }
-
+    // Görgetés figyelése
     window.addEventListener("scroll", function() {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
-            loadMorePosts();
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+        if (scrollTop + clientHeight >= scrollHeight - 5) {
+            loadVideos();
         }
     });
 
-    // Kezdeti posztok betöltése
-    loadMorePosts();
+    // Első oldal betöltése
+    loadVideos();
 });
+
 
 </script>
 </body>
