@@ -93,9 +93,9 @@
             const overlay = document.getElementById("overlay");
             const message = document.getElementById("message");
             const skipBtn = document.getElementById("skip-btn");
-            let loading = true;
+            let loading = false;
             let randomVideo = ''; // Véletlenszerű videó fájlnév
-            let page = 1; // Kezdetben az első oldal van betöltve
+            let page = 2; // Kezdetben az első oldal van betöltve
             let watchedVideos = []; // Megnézett videók tömbje
 
             // Ellenőrizzük a localStorage-t
