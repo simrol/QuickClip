@@ -4,77 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Görgetés mint TikTok</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+        }
+
+        .video-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        video {
+            width: 100vw;
+            height: auto;
+            max-height: calc(100vh - 80px);
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        #overlay {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        #overlay p {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+    </style>
 </head>
 <body>
     <div id="container" class="video-container"></div>
+    <div id="overlay">
+        <p>Scrollozz lefelé a következő videóért</p>
+    </div>
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const videoContainer = document.getElementById("container");
-        let loading = false;
-        let randomVideo = ''; // Véletlenszerű videó fájlnév
-        let page = 1; // Kezdetben az első oldal van betöltve
+        document.addEventListener("DOMContentLoaded", function() {
+            const videoContainer = document.getElementById("container");
+            const overlay = document.getElementById("overlay");
+            let loading = false;
+            let randomVideo = ''; // Véletlenszerű videó fájlnév
+            let page = 1; // Kezdetben az első oldal van betöltve
 
-        function loadRandomVideo() {
-            if (loading) return;
-            loading = true;
+            function loadRandomVideo() {
+                if (loading) return;
+                loading = true;
 
-            fetch(`https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/videos?page=${page}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.videos.length > 0) {
-                        randomVideo = data.videos[Math.floor(Math.random() * data.videos.length)]; // Véletlenszerű videó kiválasztása
-                        videoContainer.innerHTML = ''; // Töröljük az előző videót
-                        const videoElement = document.createElement("video");
-                        videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${randomVideo}`;
-                        videoElement.controls = true;
-                        videoContainer.appendChild(videoElement);
-                    } else {
-                        console.error("Hiba történt a videók betöltése közben:", data.message);
-                    }
-                    loading = false;
-                })
-                .catch(error => {
-                    console.error("Hiba történt a videók betöltése közben:", error);
-                    loading = false;
-                });
-        }
-
-        // Az első véletlenszerű videó betöltése
-        loadRandomVideo();
-
-        // Görgetés figyelése
-        window.addEventListener("scroll", function() {
-            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-            if (scrollTop + clientHeight >= scrollHeight - 5) {
-                loadRandomVideo();
+                fetch(`https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/videos?page=${page}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.videos.length > 0) {
+                            randomVideo = data.videos[Math.floor(Math.random() * data.videos.length)]; // Véletlenszerű videó kiválasztása
+                            videoContainer.innerHTML = ''; // Töröljük az előző videót
+                            const videoElement = document.createElement("video");
+                            videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${randomVideo}`;
+                            videoElement.controls = true;
+                            videoContainer.appendChild(videoElement);
+                        } else {
+                            console.error("Hiba történt a videók betöltése közben:", data.message);
+                        }
+                        loading = false;
+                    })
+                    .catch(error => {
+                        console.error("Hiba történt a videók betöltése közben:", error);
+                        loading = false;
+                    });
             }
+
+            // Az első véletlenszerű videó betöltése
+            loadRandomVideo();
+
+            // Görgetés figyelése
+            window.addEventListener("scroll", function() {
+                const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+                if (scrollTop + clientHeight >= scrollHeight - 5) {
+                    overlay.style.display = "none";
+                    loadRandomVideo();
+                } else {
+                    overlay.style.display = "block";
+                }
+            });
         });
-    });
     </script>
 </body>
 </html>
-
-
-
-<style>body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-}
-
-.video-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    padding: 20px;
-}
-
-video {
-    max-width: 100%;
-    max-height: 300px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-</style>
