@@ -58,6 +58,13 @@
             let loading = false;
             let randomVideo = ''; // Véletlenszerű videó fájlnév
             let page = 1; // Kezdetben az első oldal van betöltve
+            let watchedVideos = []; // Megnézett videók tömbje
+
+            // Ellenőrizzük a sütiket
+            const storedWatchedVideos = localStorage.getItem("watchedVideos");
+            if (storedWatchedVideos) {
+                watchedVideos = JSON.parse(storedWatchedVideos);
+            }
 
             function loadRandomVideo() {
                 if (loading) return;
@@ -68,15 +75,27 @@
                     .then(data => {
                         if (data.success && data.videos.length > 0) {
                             randomVideo = data.videos[Math.floor(Math.random() * data.videos.length)]; // Véletlenszerű videó kiválasztása
-                            videoContainer.innerHTML = ''; // Töröljük az előző videót
-                            const videoElement = document.createElement("video");
-                            videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${randomVideo}`;
-                            videoElement.controls = true;
-                            videoElement.autoplay = true; // Autoplay beállítása
-                            videoElement.onended = loadRandomVideo; // Következő videó betöltése, amikor az aktuális videó véget ér
-                            videoContainer.appendChild(videoElement);
+                            if (!watchedVideos.includes(randomVideo)) {
+                                videoContainer.innerHTML = ''; // Töröljük az előző videót
+                                const videoElement = document.createElement("video");
+                                videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${randomVideo}`;
+                                videoElement.controls = true;
+                                videoElement.autoplay = true; // Autoplay beállítása
+                                videoElement.onended = () => {
+                                    watchedVideos.push(randomVideo); // Hozzáadjuk a megtekintett videókhoz
+                                    localStorage.setItem("watchedVideos", JSON.stringify(watchedVideos)); // Sütikbe mentjük
+                                    loadRandomVideo(); // Továbblépünk a következő videóra
+                                };
+                                videoContainer.appendChild(videoElement);
+                            } else {
+                                loadRandomVideo(); // Továbblépünk a következő videóra, ha már megnéztük ezt
+                            }
                         } else {
-                            console.error("Hiba történt a videók betöltése közben:", data.message);
+                            if (watchedVideos.length === data.totalVideos) {
+                                alert("Minden videót megnéztél!"); // Üzenet, ha minden videót megnéztünk
+                            } else {
+                                console.error("Hiba történt a videók betöltése közben:", data.message);
+                            }
                         }
                         loading = false;
                     })
