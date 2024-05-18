@@ -26,6 +26,7 @@
             max-height: calc(100vh - 80px);
             border-radius: 20px;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            outline: none;
         }
 
         #overlay {
@@ -71,6 +72,7 @@
                             const videoElement = document.createElement("video");
                             videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${randomVideo}`;
                             videoElement.controls = true;
+                            videoElement.autoplay = true; // Autoplay beállítása
                             videoContainer.appendChild(videoElement);
                         } else {
                             console.error("Hiba történt a videók betöltése közben:", data.message);
