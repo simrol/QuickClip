@@ -123,7 +123,7 @@
                             videoContainer.innerHTML = ''; // Töröljük az előző videót
                             const videoElement = document.createElement("video");
                             videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${randomVideo}`;
-                            videoElement.controls = true;
+                            videoElement.controls = false;
                             videoElement.autoplay = true; // Autoplay beállítása
                             videoElement.onended = () => {
                                 watchedVideos.push(randomVideo); // Hozzáadjuk a megtekintett videókhoz
