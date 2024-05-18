@@ -44,6 +44,19 @@
             padding: 10px 20px;
             border-radius: 20px;
         }
+
+        #message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -51,10 +64,14 @@
     <div id="overlay">
         <p>Scrollozz lefelé a következő videóért</p>
     </div>
+    <div id="message">
+        <p>Minden videót megnéztél!</p>
+    </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const videoContainer = document.getElementById("container");
             const overlay = document.getElementById("overlay");
+            const message = document.getElementById("message");
             let loading = false;
             let randomVideo = ''; // Véletlenszerű videó fájlnév
             let page = 1; // Kezdetben az első oldal van betöltve
@@ -66,6 +83,9 @@
                 watchedVideos = JSON.parse(storedWatchedVideos);
             }
 
+            // Minden újratöltésnél töröljük a sütiket
+            localStorage.removeItem("watchedVideos");
+
             function loadRandomVideo() {
                 if (loading) return;
                 loading = true;
@@ -74,25 +94,26 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success && data.videos.length > 0) {
-                            randomVideo = data.videos[Math.floor(Math.random() * data.videos.length)]; // Véletlenszerű videó kiválasztása
-                            if (!watchedVideos.includes(randomVideo)) {
-                                videoContainer.innerHTML = ''; // Töröljük az előző videót
-                                const videoElement = document.createElement("video");
-                                videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${randomVideo}`;
-                                videoElement.controls = true;
-                                videoElement.autoplay = true; // Autoplay beállítása
-                                videoElement.onended = () => {
-                                    watchedVideos.push(randomVideo); // Hozzáadjuk a megtekintett videókhoz
-                                    localStorage.setItem("watchedVideos", JSON.stringify(watchedVideos)); // Sütikbe mentjük
-                                    loadRandomVideo(); // Továbblépünk a következő videóra
-                                };
-                                videoContainer.appendChild(videoElement);
-                            } else {
-                                loadRandomVideo(); // Továbblépünk a következő videóra, ha már megnéztük ezt
+                            const remainingVideos = data.videos.filter(video => !watchedVideos.includes(video));
+                            if (remainingVideos.length === 0) {
+                                message.style.display = "block";
+                                return;
                             }
+                            randomVideo = remainingVideos[Math.floor(Math.random() * remainingVideos.length)]; // Véletlenszerű videó kiválasztása
+                            videoContainer.innerHTML = ''; // Töröljük az előző videót
+                            const videoElement = document.createElement("video");
+                            videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${randomVideo}`;
+                            videoElement.controls = true;
+                            videoElement.autoplay = true; // Autoplay beállítása
+                            videoElement.onended = () => {
+                                watchedVideos.push(randomVideo); // Hozzáadjuk a megtekintett videókhoz
+                                localStorage.setItem("watchedVideos", JSON.stringify(watchedVideos)); // Sütikbe mentjük
+                                loadRandomVideo(); // Továbblépünk a következő videóra
+                            };
+                            videoContainer.appendChild(videoElement);
                         } else {
                             if (watchedVideos.length === data.totalVideos) {
-                                alert("Minden videót megnéztél!"); // Üzenet, ha minden videót megnéztünk
+                                message.style.display = "block";
                             } else {
                                 console.error("Hiba történt a videók betöltése közben:", data.message);
                             }
