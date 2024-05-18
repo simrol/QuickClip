@@ -1,1 +1,105 @@
-<p>Jelenleg még nincs kész</p>
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videó Feltöltés</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="upload-container">
+        <form id="upload-form">
+            <label for="video-upload">Válassz egy videót (max 25MB):</label>
+            <input type="file" id="video-upload" accept="video/*" required>
+            <button type="submit">Feltöltés</button>
+        </form>
+        <p id="message"></p>
+    </div>
+    <script>document.addEventListener("DOMContentLoaded", function() {
+    const uploadForm = document.getElementById("upload-form");
+    const videoUpload = document.getElementById("video-upload");
+    const message = document.getElementById("message");
+
+    uploadForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        // Ellenőrizzük a fájl méretét
+        const file = videoUpload.files[0];
+        if (file && file.size <= 25 * 1024 * 1024) { // 25 MB = 25 * 1024 * 1024 bájt
+            // A fájl mérete megfelelő, indíthatjuk a feltöltést (például AJAX segítségével)
+            message.style.color = "green";
+            message.innerText = "A fájl mérete megfelelő, feltöltés indítása...";
+
+            // Feltöltési logika (példa AJAX használatával)
+            const formData = new FormData();
+            formData.append("video", file);
+
+            fetch("/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    message.innerText = "Feltöltés sikeres!";
+                } else {
+                    message.innerText = "Feltöltés sikertelen!";
+                }
+            })
+            .catch(error => {
+                console.error("Hiba történt a feltöltés során:", error);
+                message.innerText = "Hiba történt a feltöltés során!";
+            });
+
+        } else {
+            message.style.color = "red";
+            message.innerText = "A fájl mérete meghaladja a 25 MB-ot!";
+        }
+    });
+});
+</script>
+</body>
+</html>
+<style>body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+#upload-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 16px;
+    color: red;
+}
+</style>
