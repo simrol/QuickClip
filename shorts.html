@@ -59,12 +59,12 @@
             text-align: center;
         }
 
-        #skip-btn {
+        #play-btn {
             position: absolute;
             bottom: 20px;
             right: 20px;
             padding: 10px 20px;
-            background-color: rgba(255, 0, 0, 0.7);
+            background-color: rgba(0, 255, 0, 0.7);
             color: white;
             border: none;
             border-radius: 5px;
@@ -72,30 +72,29 @@
             font-size: 16px;
         }
 
-        #skip-btn:hover {
-            background-color: rgba(255, 0, 0, 0.9);
+        #play-btn:hover {
+            background-color: rgba(0, 255, 0, 0.9);
         }
     </style>
 </head>
 <body>
-    <div id="container" class="video-container">
-        <button id="skip-btn">Átugrás</button>
-    </div>
+    <div id="container" class="video-container"></div>
     <div id="overlay">
-        <p>A videó végén automatikusan egy új tölt be mindig. Ugyanazt 2x nem fogod látni egy kőr alatt.</p>
+        <p>Scrollozz lefelé a következő videóért</p>
     </div>
     <div id="message">
         <p>Minden videót megnéztél!</p>
     </div>
+    <button id="play-btn">Lejátszás</button>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const videoContainer = document.getElementById("container");
             const overlay = document.getElementById("overlay");
             const message = document.getElementById("message");
-            const skipBtn = document.getElementById("skip-btn");
+            const playBtn = document.getElementById("play-btn");
             let loading = false;
             let randomVideo = ''; // Véletlenszerű videó fájlnév
-            let page = 3; // Kezdetben az első oldal van betöltve
+            let page = 1; // Kezdetben az első oldal van betöltve
             let watchedVideos = []; // Megnézett videók tömbje
 
             // Ellenőrizzük a localStorage-t
@@ -124,7 +123,7 @@
                             videoContainer.innerHTML = ''; // Töröljük az előző videót
                             const videoElement = document.createElement("video");
                             videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${randomVideo}`;
-                            videoElement.controls = false;
+                            videoElement.controls = true;
                             videoElement.autoplay = true; // Autoplay beállítása
                             videoElement.onended = () => {
                                 watchedVideos.push(randomVideo); // Hozzáadjuk a megtekintett videókhoz
@@ -132,7 +131,6 @@
                                 loadRandomVideo(); // Továbblépünk a következő videóra
                             };
                             videoContainer.appendChild(videoElement);
-                            videoContainer.appendChild(skipBtn); // Újra hozzáadjuk a Skip gombot a videó mellé
                         } else {
                             if (watchedVideos.length === data.totalVideos) {
                                 message.style.display = "block";
@@ -151,11 +149,9 @@
             // Az első véletlenszerű videó betöltése
             loadRandomVideo();
 
-            // Skip gomb eseménykezelője
-            skipBtn.addEventListener("click", function() {
-                watchedVideos.push(randomVideo); // Hozzáadjuk a megtekintett videókhoz
-                localStorage.setItem("watchedVideos", JSON.stringify(watchedVideos)); // Sütikbe mentjük
-                loadRandomVideo(); // Továbblépünk a következő videóra
+            // Play gomb eseménykezelője
+            playBtn.addEventListener("click", function() {
+                loadRandomVideo(); // Továbblépünk a következő véletlenszerű videóra
             });
         });
     </script>
