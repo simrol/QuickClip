@@ -14,20 +14,19 @@
         let loading = false;
         let page = 1; // Kezdetben az első oldal van betöltve
 
-        function loadVideos() {
+        function loadNextVideo() {
             if (loading) return;
             loading = true;
 
             fetch(`https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/videos?page=${page}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        data.videos.forEach(video => {
-                            const videoElement = document.createElement("video");
-                            videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${video}`;
-                            videoElement.controls = true;
-                            videoContainer.appendChild(videoElement);
-                        });
+                    if (data.success && data.videos.length > 0) {
+                        const video = data.videos[0]; // Csak az első videót jelenítjük meg
+                        const videoElement = document.createElement("video");
+                        videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${video}`;
+                        videoElement.controls = true;
+                        videoContainer.appendChild(videoElement);
 
                         page++; // Következő oldalra lépünk
                     } else {
@@ -41,20 +40,22 @@
                 });
         }
 
+        // Az első videó betöltése
+        loadNextVideo();
+
         // Görgetés figyelése
         window.addEventListener("scroll", function() {
             const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
             if (scrollTop + clientHeight >= scrollHeight - 5) {
-                loadVideos();
+                loadNextVideo();
             }
         });
-
-        // Első oldal betöltése
-        loadVideos();
     });
     </script>
 </body>
 </html>
+
+
 
 <style>body {
     margin: 0;
