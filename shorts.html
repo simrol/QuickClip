@@ -7,52 +7,73 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="container"></div>
-    <script>document.addEventListener("DOMContentLoaded", function() {
-    const videoContainer = document.getElementById("container"); // Módosítás
-    let loading = false;
-    let page = 1; // Kezdetben az első oldal van betöltve
+    <div id="container" class="video-container"></div>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const videoContainer = document.getElementById("container");
+        let loading = false;
+        let page = 1; // Kezdetben az első oldal van betöltve
 
-    function loadVideos() {
-        if (loading) return;
-        loading = true;
+        function loadVideos() {
+            if (loading) return;
+            loading = true;
 
-        fetch(`https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/videos?page=${page}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    data.videos.forEach(video => {
-                        const videoElement = document.createElement("video");
-                        videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${video}`;
-                        videoElement.controls = true;
-                        videoContainer.appendChild(videoElement);
-                    });
+            fetch(`https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/videos?page=${page}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        data.videos.forEach(video => {
+                            const videoElement = document.createElement("video");
+                            videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${video}`;
+                            videoElement.controls = true;
+                            videoContainer.appendChild(videoElement);
+                        });
 
-                    page++; // Következő oldalra lépünk
-                } else {
-                    console.error("Hiba történt a videók betöltése közben:", data.message);
-                }
-                loading = false;
-            })
-            .catch(error => {
-                console.error("Hiba történt a videók betöltése közben:", error);
-                loading = false;
-            });
-    }
-
-    // Görgetés figyelése
-    window.addEventListener("scroll", function() {
-        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-        if (scrollTop + clientHeight >= scrollHeight - 5) {
-            loadVideos();
+                        page++; // Következő oldalra lépünk
+                    } else {
+                        console.error("Hiba történt a videók betöltése közben:", data.message);
+                    }
+                    loading = false;
+                })
+                .catch(error => {
+                    console.error("Hiba történt a videók betöltése közben:", error);
+                    loading = false;
+                });
         }
+
+        // Görgetés figyelése
+        window.addEventListener("scroll", function() {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+            if (scrollTop + clientHeight >= scrollHeight - 5) {
+                loadVideos();
+            }
+        });
+
+        // Első oldal betöltése
+        loadVideos();
     });
-
-    // Első oldal betöltése
-    loadVideos();
-});
-
-
-</script>
+    </script>
 </body>
 </html>
+
+<style>body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.video-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+video {
+    max-width: 100%;
+    max-height: 300px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+</style>
