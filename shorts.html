@@ -12,9 +12,10 @@
     document.addEventListener("DOMContentLoaded", function() {
         const videoContainer = document.getElementById("container");
         let loading = false;
+        let randomVideo = ''; // Véletlenszerű videó fájlnév
         let page = 1; // Kezdetben az első oldal van betöltve
 
-        function loadNextVideo() {
+        function loadRandomVideo() {
             if (loading) return;
             loading = true;
 
@@ -22,13 +23,12 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.videos.length > 0) {
-                        const video = data.videos[0]; // Csak az első videót jelenítjük meg
+                        randomVideo = data.videos[Math.floor(Math.random() * data.videos.length)]; // Véletlenszerű videó kiválasztása
+                        videoContainer.innerHTML = ''; // Töröljük az előző videót
                         const videoElement = document.createElement("video");
-                        videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${video}`;
+                        videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${randomVideo}`;
                         videoElement.controls = true;
                         videoContainer.appendChild(videoElement);
-
-                        page++; // Következő oldalra lépünk
                     } else {
                         console.error("Hiba történt a videók betöltése közben:", data.message);
                     }
@@ -40,14 +40,14 @@
                 });
         }
 
-        // Az első videó betöltése
-        loadNextVideo();
+        // Az első véletlenszerű videó betöltése
+        loadRandomVideo();
 
         // Görgetés figyelése
         window.addEventListener("scroll", function() {
             const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
             if (scrollTop + clientHeight >= scrollHeight - 5) {
-                loadNextVideo();
+                loadRandomVideo();
             }
         });
     });
