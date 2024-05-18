@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Görgetés mint TikTok</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="container"></div>
+    <script>document.addEventListener("DOMContentLoaded", function() {
+    const container = document.getElementById("container");
+
+    function createNewPost() {
+        const post = document.createElement("div");
+        post.className = "post";
+
+        // Generálunk egy véletlenszerű ID-t
+        const videoId = Math.floor(Math.random() * 1000);
+
+        // Videó elem létrehozása
+        const video = document.createElement("video");
+        video.src = `https://example.com/video${videoId}.mp4`; // Használja a videoId-t a URL-ben
+        video.controls = true;
+
+        // Videó ID hozzáadása
+        const videoIdText = document.createElement("div");
+        videoIdText.innerText = " " + videoId;
+
+        // Hozzáadjuk a videót és a szöveget a poszthoz
+        post.appendChild(video);
+        post.appendChild(videoIdText);
+
+        // Hozzáadjuk a posztot a containerhez
+        container.appendChild(post);
+    }
+
+    function loadMorePosts() {
+        for (let i = 0; i < 3; i++) {
+            createNewPost();
+        }
+    }
+
+    window.addEventListener("scroll", function() {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
+            loadMorePosts();
+        }
+    });
+
+    // Kezdeti posztok betöltése
+    loadMorePosts();
+});
+
+</script>
+</body>
+</html>
+<style>body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.post {
+    width: 100%;
+    max-width: 600px;
+    height: 80vh;
+    margin: 20px 0;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: #333;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+</style>
