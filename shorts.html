@@ -113,7 +113,7 @@
                 if (loading) return;
                 loading = true;
 
-                fetch(`https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/videos?page=${page}`)
+                fetch(`https://quickcliprender.onrender.com/videos?page=${page}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.success && data.videos.length > 0) {
@@ -125,7 +125,7 @@
                             randomVideo = remainingVideos[Math.floor(Math.random() * remainingVideos.length)]; // Véletlenszerű videó kiválasztása
                             videoContainer.innerHTML = ''; // Töröljük az előző videót
                             const videoElement = document.createElement("video");
-                            videoElement.src = `https://58544482-d29c-41bf-84ee-c0306578a268-00-33q4ieffye7kb.spock.replit.dev/uploads/${randomVideo}`;
+                            videoElement.src = `https://quickcliprender.onrender.com/uploads/${randomVideo}`;
                             videoElement.controls = false;
                             videoElement.autoplay = true; // Autoplay beállítása
                             videoElement.onended = () => {
